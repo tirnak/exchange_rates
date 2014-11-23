@@ -1,0 +1,54 @@
+<script>
+    window.addEventListener('load', function() {
+        console.log('sdfg');
+    }, false);
+
+    angular.module('Rates', [])
+        .controller('DefaultController', function($scope, $http) {
+            $scope.rates = {
+                visible : [],
+                invisible : []
+            };
+
+            $scope.getRates = function() {
+                $http.get('/application/index/do').success(
+                    function(data) {
+                        for (var i in data) {
+                            debugger;
+                            if (parseInt(data[i].visible) === 1) {
+                                $scope.rates.visible.push(data[i])
+                            } else {
+                                $scope.rates.invisible.push(data[i])
+                            }
+                        }
+                        console.log($scope.rates);
+                    }
+                );
+            }
+        });
+
+</script>
+
+<style>
+    #rates {
+        width: 20em;
+        margin: auto;
+        color: peachpuff;
+    }
+</style>
+
+<div id="rates" class="well" ng-app="Rates">
+    <div class="panel panel-default" ng-controller="DefaultController">
+        <div class="panel-heading">
+            Курсы валют на <?=date('d.m.Y')?>:
+        </div>
+
+        <table class="table" ng-init="getRates()">
+            <tr ng-repeat="rate in rates.visible">
+                <td>{{rate.abbreviation}}</td>
+                <td>{{rate.name_ru}}</td>
+                <td>{{rate.name_ru}}</td>
+            </tr>
+        </table>
+    </div>
+</div>
