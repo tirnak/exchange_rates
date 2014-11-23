@@ -25,15 +25,18 @@
                     }
                 );
             }
+
+            $scope.hideValue = function(rate) {
+                console.log(rate);
+            }
         });
 
 </script>
 
 <style>
     #rates {
-        width: 20em;
+        display: table;
         margin: auto;
-        color: peachpuff;
     }
 </style>
 
@@ -46,8 +49,10 @@
         <table class="table" ng-init="getRates()">
             <tr ng-repeat="rate in rates.visible">
                 <td>{{rate.abbreviation}}</td>
+                <td>{{rate.nominal}}</td>
                 <td>{{rate.name_ru}}</td>
-                <td>{{rate.name_ru}}</td>
+                <td>{{rate.value}}</td>
+                <td><button ng-click="hideValue(rate)">Не отображать</button></td>
             </tr>
         </table>
     </div>
