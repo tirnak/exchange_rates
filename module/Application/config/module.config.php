@@ -73,7 +73,8 @@ return array(
     ),
     'controllers' => array(
         'invokables' => array(
-            'Application\Controller\Index' => 'Application\Controller\IndexController'
+            'Application\Controller\Index' => 'Application\Controller\IndexController',
+            'Application\Controller\Rate' => 'Application\Controller\RateController'
         ),
     ),
     'view_manager' => array(

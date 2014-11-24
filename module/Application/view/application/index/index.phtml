@@ -5,29 +5,53 @@
 
     angular.module('Rates', [])
         .controller('DefaultController', function($scope, $http) {
+
             $scope.rates = {
                 visible : [],
-                invisible : []
+                invisible : [],
+                reset : function() {
+                    this.visible = [];
+                    this.invisible = [];
+                }
             };
 
             $scope.getRates = function() {
-                $http.get('/application/index/do').success(
+                $http.get('/application/rate/get').success(
                     function(data) {
+                        $scope.rates.reset();
                         for (var i in data) {
-                            debugger;
                             if (parseInt(data[i].visible) === 1) {
                                 $scope.rates.visible.push(data[i])
                             } else {
                                 $scope.rates.invisible.push(data[i])
                             }
                         }
-                        console.log($scope.rates);
                     }
                 );
             }
 
-            $scope.hideValue = function(rate) {
-                console.log(rate);
+            $scope.hide = function(rate) {
+
+                $http.post('/application/rate/hide',
+                    {
+                        currency_id : rate.currency_id
+                    }
+                ).success(function() {
+                    $scope.getRates();
+                });
+
+            }
+
+            $scope.show = function(rate) {
+
+                $http.post('/application/rate/show',
+                    {
+                        currency_id : rate.currency_id
+                    }
+                ).success(function() {
+                    $scope.getRates();
+                });
+
             }
         });
 
@@ -38,10 +62,13 @@
         display: table;
         margin: auto;
     }
+    .other-rates {
+        width: 33em;
+    }
 </style>
 
-<div id="rates" class="well" ng-app="Rates">
-    <div class="panel panel-default" ng-controller="DefaultController">
+<div id="rates" class="well" ng-app="Rates" ng-controller="DefaultController">
+    <div class="panel panel-default">
         <div class="panel-heading">
             Курсы валют на <?=date('d.m.Y')?>:
         </div>
@@ -52,8 +79,14 @@
                 <td>{{rate.nominal}}</td>
                 <td>{{rate.name_ru}}</td>
                 <td>{{rate.value}}</td>
-                <td><button ng-click="hideValue(rate)">Не отображать</button></td>
+                <td><button ng-click="hide(rate)">Не отображать</button></td>
             </tr>
         </table>
+    </div>
+    <div class="other-rates">
+        Отобразить другие курсы валют:<br>
+        <span ng-repeat="rate in rates.invisible">
+            <a href="javascript: void(0)" ng-click="show(rate)">{{rate.name_ru}}</a>
+        </span>
     </div>
 </div>
