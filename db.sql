@@ -2,10 +2,21 @@ CREATE TABLE `currency`.`currency` (
   `currency_id` INT NOT NULL AUTO_INCREMENT,
   `abbreviation` VARCHAR(45) NOT NULL,
   `amount` INT NOT NULL,
+  `nominal` INT NOT NULL,
   `name_ru` VARCHAR(45) NOT NULL,
   `visible` TINYINT(1) NULL,
   PRIMARY KEY (`currency_id`),
   UNIQUE INDEX `abbreviation_UNIQUE` (`abbreviation` ASC));
+
+
+CREATE TABLE `currency`.`rate` (
+  `rate_id` int(11) NOT NULL AUTO_INCREMENT,
+  `currency_id` int(11) NOT NULL,
+  `value` float NOT NULL,
+  `date` date NOT NULL,
+  PRIMARY KEY (`rate_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=239 DEFAULT CHARSET=utf8;
+
 
 
 INSERT INTO currency.currency(`abbreviation`, `nominal`, `name_ru`, `visible`) VALUES
