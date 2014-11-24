@@ -2,63 +2,65 @@
 
 namespace Application\Model;
 
-class RatesHandler {
+class RatesHandler
+{
 
     /**
      * @var string
      * defaults to date('Y-m-d');
      */
-    private $now;
+    private $_now;
     /**
      * @var array of db results
      */
-    private $rates = array();
-    private $entityManager;
+    private $_rates = array();
+    private $_entityManager;
 
     public function __construct($entityManager, $timestamp = false)
     {
-        $this->entityManager = $entityManager;
-        $this->now = date('Y-m-d',
+        $this->_entityManager = $entityManager;
+        $this->_now = date(
+            'Y-m-d',
             $timestamp ? : time()
         );
     }
 
     public function getRates()
     {
-        if (!count($this->rates)) {
+        if (!count($this->_rates)) {
             $this->getRatesFromMemchache();
         }
 
-        if (!count($this->rates)) {
+        if (!count($this->_rates)) {
             $this->getRatesFromDB();
         }
 
-        if (!count($this->rates)) {
+        if (!count($this->_rates)) {
             $this->getRatesFromCB();
         }
-        return $this->rates;
+        return $this->_rates;
     }
 
     private function getRatesFromMemchache()
     {
-        $this->rates = MemcacheHandler::getInstance()->getRates();
+        $this->_rates = MemcacheHandler::getInstance()->getRates();
     }
 
     private function getRatesFromDB()
     {
-        $conn = $this->entityManager->getConnection();
+        $conn = $this->_entityManager->getConnection();
         $resultSet = $conn->fetchAll(
             'SELECT * FROM currency.rate r NATURAL JOIN currency.currency WHERE r.date = '
-            . $conn->quote($this->now)
+            . $conn->quote($this->_now)
         );
 
-        $this->rates = $resultSet;
+        $this->_rates = $resultSet;
 
         if (!count($resultSet)) {
             return;
         }
 
-        MemcacheHandler::getInstance()->saveRates($this->rates);
+        MemcacheHandler::getInstance()->saveRates($this->_rates);
     }
 
     private function getRatesFromCB()
@@ -69,19 +71,20 @@ class RatesHandler {
 
         $count = 0;
 
-        foreach($xml->children() as $node) {
+        foreach ($xml->children() as $node) {
 
             $sql = 'INSERT INTO currency.rate(currency_id,value,date) VALUE (
                 (
                     SELECT currency_id FROM currency WHERE abbreviation = ?
                 ),?,?
             )';
-            $conn = $this->entityManager->getConnection();
-            $count += $conn->executeUpdate($sql,
+            $conn = $this->_entityManager->getConnection();
+            $count += $conn->executeUpdate(
+                $sql,
                 array(
                     (string)$node->CharCode,
-                    (float)str_replace(',' ,'.', $node->Value),
-                    $this->now
+                    (float)str_replace(',', '.', $node->Value),
+                    $this->_now
                 )
             );
 

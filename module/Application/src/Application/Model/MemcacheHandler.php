@@ -3,31 +3,38 @@
 namespace Application\Model;
 
 
-class MemcacheHandler {
+class MemcacheHandler
+{
 
     const MEMCACHE_KEY = 'rates';
     /**
      * @var \Memcache
      */
-    private $memcache;
-    private static $__instance = null;
+    private $_memcache;
+    /**
+     * @var MemcacheHandler
+     */
+    private static $_instance = null;
 
     public static function getInstance()
     {
-        if (self::$__instance === null) {
-            self::$__instance = new MemcacheHandler();
+        if (self::$_instance === null) {
+            self::$_instance = new MemcacheHandler();
         }
-        return self::$__instance;
+        return self::$_instance;
     }
 
-    private function __construct() {}
+    private function __construct()
+    {
+
+    }
 
     public function getRates()
     {
         if (!$this->isMemcacheSet()) {
             return array();
         }
-        if ($ratesSerialized = $this->memcache->get(self::MEMCACHE_KEY)) {
+        if ($ratesSerialized = $this->_memcache->get(self::MEMCACHE_KEY)) {
             return $ratesSerialized;
         } else {
             return array();
@@ -39,7 +46,7 @@ class MemcacheHandler {
         if ($this->isMemcacheSet()) {
             $restOfDayInSec = strtotime('+1 day', mktime(0, 0, 0)) - time();
 
-            $this->memcache->add(
+            $this->_memcache->add(
                 self::MEMCACHE_KEY,
                 $rates,
                 false,
@@ -51,7 +58,7 @@ class MemcacheHandler {
     public function clearRates()
     {
         if ($this->isMemcacheSet()) {
-            $this->memcache->delete(
+            $this->_memcache->delete(
                 self::MEMCACHE_KEY
             );
         }
@@ -65,12 +72,11 @@ class MemcacheHandler {
         if (!class_exists('Memcache')) {
             return false;
         }
-        if (!is_a($this->memcache, 'Memcache')) {
-            $this->memcache = new \Memcache();
-            if (!$this->memcache->connect('127.0.0.1', 11211)) {
+        if (!is_a($this->_memcache, 'Memcache')) {
+            $this->_memcache = new \Memcache();
+            if (!$this->_memcache->connect('127.0.0.1', 11211)) {
                 return false;
-            }
-            else {
+            } else {
                 return true;
             }
         }

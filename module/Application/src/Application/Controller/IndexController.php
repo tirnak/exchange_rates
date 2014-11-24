@@ -12,7 +12,8 @@ class IndexController extends AbstractActionController
         return new ViewModel();
     }
 
-    public function fillCurrenciesAction() {
+    public function fillCurrenciesAction()
+    {
         $cbr = file_get_contents('http://www.cbr.ru/scripts/XML_daily.asp?date_req=' . date('d.m.Y'));
 
         $xml = new \SimpleXMLElement($cbr);
@@ -21,7 +22,7 @@ class IndexController extends AbstractActionController
             ->getServiceLocator()
             ->get('Doctrine\ORM\EntityManager');
 
-        foreach($xml->children() as $node) {
+        foreach ($xml->children() as $node) {
             $currency = new \Application\Entity\Currency();
             $currency->setAbbreviation($node->CharCode);
             $currency->setNameRu($node->Name);
@@ -32,6 +33,16 @@ class IndexController extends AbstractActionController
 
         $objectManager->flush();
 
+    }
+
+    public function timeToEndOfDayAction()
+    {
+        $this->layout('layout/empty');
+        $response = $this->getResponse();
+        $response->setContent(
+            strtotime('+1 day', mktime(0, 0, 0)) - time()
+        );
+        return $response;
     }
 
 }

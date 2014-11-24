@@ -7,21 +7,22 @@
 
         <!-- Styles -->
         <?php echo $this->headLink()
-                        ->prependStylesheet($this->basePath() . '/css/style.css')
-                        ->prependStylesheet($this->basePath() . '/css/bootstrap-theme.min.css')
-                        ->prependStylesheet($this->basePath() . '/css/bootstrap.min.css') ?>
+            ->prependStylesheet($this->basePath() . '/css/style.css')
+            ->prependStylesheet($this->basePath() . '/css/bootstrap-theme.min.css')
+            ->prependStylesheet($this->basePath() . '/css/bootstrap.min.css') ?>
 
         <!-- Scripts -->
         <?php echo $this->headScript()
-            ->prependFile($this->basePath() . '/js/angular.min.js')
-        ; ?>
+            ->prependFile(
+                $this->basePath()
+                . '/js/angular.min.js'
+            );
+        ?>
 
     </head>
     <body>
         <div class="container">
             <?php echo $this->content; ?>
-            <hr>
-            <footer></footer>
         </div> <!-- /container -->
     </body>
 </html>

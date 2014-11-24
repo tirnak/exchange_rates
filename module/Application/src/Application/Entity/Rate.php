@@ -9,7 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="rate")
  */
-class Rate {
+class Rate
+{
 
     /**
      * @ORM\Id

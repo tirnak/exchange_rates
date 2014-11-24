@@ -20,7 +20,8 @@ class RateController extends AbstractActionController
         );
     }
 
-    public function hideAction() {
+    public function hideAction()
+    {
 
         $em = $this->getServiceLocator()
             ->get('Doctrine\ORM\EntityManager');
